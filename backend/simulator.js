@@ -2,28 +2,29 @@ import { PrismaClient } from '@prisma/client';
 
 export const startSimulator = (io) => {
     const prisma = new PrismaClient();
-    console.log("Simulator starting (internal mode)...");
+    // console.log("Simulator starting");
 
-    setInterval(async () => {
+    const runSimulation = async () => {
         try {
-            const devices = await prisma.device.findMany();
+           
+            const devices = await prisma.device.findMany({
+                where: { isOnline: true }
+            });
 
             if (devices.length === 0) {
-                return;
+                // If no devices, check again in 2s
+                setTimeout(runSimulation, 2000);
+                return; 
             }
 
-            const onlineDevices = devices.filter(d => d.isOnline);
-            if (onlineDevices.length > 0) {
-                 console.log(`Updating ${onlineDevices.length} online devices...`); 
-            }
+            // console.log(`Updating ${devices.length} online devices...`);
 
             for (const device of devices) {
-                if (!device.isOnline) continue;
-
-                const voltage = 220 + (Math.random() * 10);
-                const current = Math.random() * 10;
+                const voltage = 220 + (Math.random() * 10 - 5);
+                const current = Math.random() * 5;
                 const power = voltage * current;
 
+               
                 const telemetry = await prisma.telemetry.create({
                     data: {
                         deviceId: device.id,
@@ -33,18 +34,28 @@ export const startSimulator = (io) => {
                     }
                 });
 
+            
                 await prisma.device.update({
                     where: { id: device.id },
                     data: { lastSeen: new Date() }
                 });
 
+               
                 io.emit('telemetry_data', {
                     deviceId: device.id,
                     data: telemetry
                 });
             }
         } catch (err) {
-            console.error("Simulator Error:", err);
+           
+          
+                console.error("Simulator Error:", err);
+           
+        } finally {
+          
+            setTimeout(runSimulation, 2000);
         }
-    }, 2000); 
+    };
+
+    runSimulation();
 };
