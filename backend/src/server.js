@@ -14,13 +14,13 @@ const server = http.createServer(app);
 
 const io = new Server(server, {
   cors: {
-    origin: "https://iot-management-frontend.vercel.app/",
+    origin: "https://iot-management-frontend.vercel.app",
     methods: ["GET", "POST"]
   }
 });
 
 app.use(cors({
-  origin: "https://iot-management-frontend.vercel.app/",
+  origin: "https://iot-management-frontend.vercel.app",
   credentials: true
 }));
 
