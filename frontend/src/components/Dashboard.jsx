@@ -39,7 +39,12 @@ const Dashboard = () => {
         const userData = JSON.parse(localStorage.getItem('user'));
         setUser(userData);
 
-        const socket = io('https://iot-management-backend.onrender.com');
+        // Mode switching: development = localhost, production = live URL
+        const SOCKET_URL = import.meta.env.VITE_MODE === 'development'
+            ? 'http://localhost:5000'
+            : 'https://iot-management-backend.onrender.com';
+
+        const socket = io(SOCKET_URL);
 
         socket.on('connect', () => {
             console.log("Custom Socket Connected:", socket.id);
