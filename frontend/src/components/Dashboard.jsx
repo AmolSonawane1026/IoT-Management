@@ -39,7 +39,7 @@ const Dashboard = () => {
         const userData = JSON.parse(localStorage.getItem('user'));
         setUser(userData);
 
-        const socket = io('http://localhost:5000');
+        const socket = io('https://iot-management-backend.onrender.com');
 
         socket.on('connect', () => {
             console.log("Custom Socket Connected:", socket.id);
