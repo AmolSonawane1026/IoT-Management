@@ -12,15 +12,21 @@ dotenv.config();
 const app = express();
 const server = http.createServer(app);
 
+// Simple mode switching: development = localhost, production = live URL
+const FRONTEND_URL = process.env.MODE === 'development' 
+  ? 'http://localhost:5173'
+  : process.env.FRONTEND_URL;
+
 const io = new Server(server, {
   cors: {
-    origin: "https://iot-management-frontend.vercel.app",
-    methods: ["GET", "POST"]
+    origin: FRONTEND_URL,
+    methods: ["GET", "POST"],
+    credentials: true
   }
 });
 
 app.use(cors({
-  origin: "https://iot-management-frontend.vercel.app",
+  origin: FRONTEND_URL,
   credentials: true
 }));
 
