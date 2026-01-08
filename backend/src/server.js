@@ -12,7 +12,6 @@ dotenv.config();
 const app = express();
 const server = http.createServer(app);
 
-// Mode switching: development = localhost, production = live URL
 const FRONTEND_URL = process.env.MODE === 'development' 
   ? 'http://localhost:5173'
   : 'https://iot-management-frontend.vercel.app';
